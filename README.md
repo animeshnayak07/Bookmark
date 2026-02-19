@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Smart Bookmark App
 
-## Getting Started
+This is a simple real-time bookmark manager built using Next.js (App Router), Supabase (Authentication, Database, Realtime), and Tailwind CSS. The goal was to build a secure, production-ready app with Google login, user-level data isolation, and live updates.
 
-First, run the development server:
+Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Google OAuth authentication (no email/password)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Bookmarks are private to each user
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Real-time updates across multiple tabs
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Add and delete bookmarks
 
-## Learn More
+Deployed on Vercel
 
-To learn more about Next.js, take a look at the following resources:
+Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Next.js (App Router)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Supabase (Auth + PostgreSQL + Realtime)
 
-## Deploy on Vercel
+Tailwind CSS
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Challenges Faced
+
+OAuth Redirect Mismatch
+While setting up Google authentication, I encountered a redirect_uri_mismatch error. The issue was caused by an incorrect redirect configuration in Google Cloud. I resolved it by ensuring Google redirects to Supabase’s callback endpoint (https://PROJECT_ID.supabase.co/auth/v1/callback) rather than directly to the frontend.
+
+Row Level Security
+Configuring Row Level Security correctly was important to ensure that users can only access their own bookmarks. I enabled RLS on the bookmarks table and created policies using auth.uid() = user_id to enforce proper data isolation.
+
+Real-time Updates
+After inserting a bookmark, the UI was not updating immediately. I implemented a Supabase realtime subscription along with a manual refetch after insert/delete to ensure consistent updates across tabs.
+
+Deployment Issues
+During deployment on Vercel, I faced build errors due to incorrect environment variables and misconfiguration of NODE_ENV. After correcting the Supabase project URL and properly setting environment variables in Vercel, the application deployed successfully.
